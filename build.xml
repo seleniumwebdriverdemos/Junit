@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE project [
+]>
+
+<project name="JUnit Sample" default="usage" basedir=".">  
+
+<!-- ========== Initialize Properties =================================== -->
+    <property environment="env"/>
+    <property name="wspace.home" value="${basedir}"/>
+	<property name="wspace.jars" value="C:\softwares\jars"/>
+    <property name="test.dest" value="${wspace.home}/build"/>
+	<property name="test.junit_reports" value="${wspace.home}/junit_reports"/>
+	<property name="test.src" value="${wspace.home}/src"/>
+<!-- <property name="test.reportsDir" value="C:\testStorage\GitHub\JUnit Sample\Junit_reports"/> -->
+	<property name="test.reportsDir" value="${wspace.home}/junit_reports"/>
+	
+
+	<path id="testcase.path">
+	    <pathelement location="${test.dest}"/>
+		<fileset dir="${wspace.jars}">
+	    <include name="*.jar"/>
+	    </fileset>
+	</path>
+
+ 	<target name="setClassPath" unless="test.classpath">
+        <path id="classpath_jars">
+        <fileset dir="${wspace.jars}" includes="*.jar"/>
+        </path>
+        
+ 		<pathconvert pathsep=":" 
+        property="test.classpath" 
+        refid="classpath_jars"/>
+    </target>
+
+    <target name="init" depends="setClassPath">
+        <tstamp>
+            <format property="start.time" pattern="MM/dd/yyyy hh:mm aa" />
+        </tstamp>
+        
+    	<condition property="ANT" 
+            value="${env.ANT_HOME}/bin/ant.bat" 
+            else="${env.ANT_HOME}/bin/ant">
+            <os family="windows" />
+        </condition>
+        
+    </target>
+      
+<!--Command Type in CMD: all -->
+    	<target name="all">
+    </target>
+
+<!--Command Type in CMD: clean -->
+    <target name="clean">
+        <delete dir="${test.dest}"/>
+    	 <delete dir="${test.junit_reports}"/>
+    </target>
+
+<!--Command Type in CMD: compile -->
+    <target name="compile" depends="init, clean" > 
+		<delete includeemptydirs="true" quiet="true">
+            <fileset dir="${test.dest}" includes="**/*"/>
+		</delete>
+        <echo message="making directory..."/>
+		
+ <!--Creating directories build & junit_reports -->
+    	<mkdir dir="${test.dest}"/>
+    	<mkdir dir="${test.junit_reports}"/>
+        
+    	<echo message="classpath------: ${test.classpath}"/>
+        <echo message="compiling..."/>
+       
+ <!-- Set your Java JDK version in target="*.*" -->
+    	<javac 
+            debug="true" 
+            destdir="${test.dest}" 
+            srcdir="${test.src}" 
+            target="1.8" 
+            classpath="${test.classpath}"
+        >
+    	</javac>
+      </target>
+
+<!-- Command Type in CMD: build -->
+    <target name="build" depends="init"> </target>
+
+	<target name="usage">
+        <echo>
+            ant run will execute the test
+        </echo>
+    </target>
+
+	<path id="test.c">
+	        <fileset dir="${wspace.jars}" includes="*.jar"/>
+	</path>
+
+<!--Command Type in CMD: run -->
+	
+	<target name="run" >  
+		<delete includeemptydirs="true" quiet="true">
+		       <fileset dir="${test.reportsDir}" includes="**/*"/>
+		</delete>
+			    
+		<java jar="${wspace.jars}" fork="true" spawn="true" />  
+	    <junit fork="yes" haltonfailure="no" printsummary="yes">
+		
+	    <classpath refid="testcase.path" />  
+	 
+<!--  <classpath ="${test.classpath}"/> -->  
+			    <batchtest  todir="${test.reportsDir}" fork="true">  
+			    <fileset dir="${test.dest}">  
+			       
+		
+<!-- List All your test Cases Here like this 	    	  
+			    	  	<include name="JunitParameterization.class" />
+			    	  
+			    	  or 
+	point your suite package like this 
+			    	  
+			    	  	<include name="TestSuite.class" />
+-->
+			    	
+<include name="JunitParameterization.class" />
+
+		
+</fileset>  
+</batchtest>    
+<formatter type="xml" /> 
+<classpath refid="testcase.path" />  
+</junit>  
+
+		<junitreport todir="${test.reportsDir}">    
+			<fileset dir="${test.reportsDir}">  
+				<include name="TEST-*.xml" />  
+			</fileset> 
+			
+<report todir="${test.reportsDir}" />  
+			
+</junitreport>  
+</target>
+
+	
+</project>
