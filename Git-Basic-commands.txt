@@ -1,0 +1,8 @@
+	ssh-keygen -t rsa
+	git init
+	git status
+	git add *.txt
+	git status
+	git commit -m "first commit"
+	git remote add origin git@github.com:KapilanSelvanathan/TestGit.git [Only once]
+	git push -u origin master
