@@ -1,0 +1,4 @@
+CV
+Manual Testing
+Jira
+Agile
